@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>냉장고 재료 노트</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="냉장고 노트">
+<meta name="theme-color" content="#FBF8F2">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%236E8B5E'/%3E%3Ctext x='50' y='64' font-size='52' text-anchor='middle'%3E%F0%9F%A5%AC%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Pretendard+Std:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    --paper: #FBF8F2;
+    --paper-dark: #14130F;
+    --ink: #2B2A24;
+    --ink-dark: #EDE9DD;
+    --muted: #8C8674;
+    --muted-dark: #A39C87;
+    --line: #E4DEC9;
+    --line-dark: #3A382E;
+    --card: #FFFFFF;
+    --card-dark: #1E1C16;
+
+    --sage: #6E8B5E;
+    --sage-soft: #E7EEDF;
+    --amber: #C98A2E;
+    --amber-soft: #F6E9D2;
+    --rust: #B4482A;
+    --rust-soft: #F5E0D6;
+    --plum: #8A5A6E;
+    --plum-soft: #F0E1E6;
+
+    --bg: var(--paper);
+    --fg: var(--ink);
+    --fg-muted: var(--muted);
+    --border: var(--line);
+    --surface: var(--card);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: var(--paper-dark);
+      --fg: var(--ink-dark);
+      --fg-muted: var(--muted-dark);
+      --border: var(--line-dark);
+      --surface: var(--card-dark);
+      --sage-soft: #263426;
+      --amber-soft: #3A2E17;
+      --rust-soft: #3B2119;
+      --plum-soft: #332229;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: var(--paper-dark);
+    --fg: var(--ink-dark);
+    --fg-muted: var(--muted-dark);
+    --border: var(--line-dark);
+    --surface: var(--card-dark);
+    --sage-soft: #263426;
+    --amber-soft: #3A2E17;
+    --rust-soft: #3B2119;
+    --plum-soft: #332229;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Pretendard Std', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, .serif { font-family: 'Source Serif 4', Georgia, serif; }
+
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 20px 90px; }
+
+  header.top { margin-bottom: 2px; }
+  header.top h1 { font-size: 25px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+  .subhead { color: var(--fg-muted); font-size: 13.5px; margin: 4px 0 18px; }
+
+  /* Tabs */
+  .tabbar {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+  .tabbtn {
+    flex: 1;
+    text-align: center;
+    padding: 9px 6px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    color: var(--fg-muted);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .tabbtn.active { background: var(--sage); color: #fff; }
+
+  .tabpanel { display: none; }
+  .tabpanel.active { display: block; }
+
+  .toolbar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .toolbar input[type="text"] {
+    flex: 1; min-width: 120px; padding: 10px 12px;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: var(--surface); color: var(--fg); font-size: 14px;
+  }
+  select.filter {
+    padding: 10px 8px; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--surface); color: var(--fg); font-size: 13.5px;
+  }
+
+  .actions-row { display: flex; gap: 8px; margin-bottom: 18px; }
+  .add-btn, .ghost-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: none; padding: 10px 14px; border-radius: 10px;
+    font-size: 13.5px; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .add-btn { background: var(--sage); color: #fff; flex: 1; }
+  .ghost-btn { background: var(--surface); color: var(--fg); border: 1px solid var(--border); flex: 1; }
+  .add-btn:active, .ghost-btn:active { transform: translateY(1px); }
+
+  .summary-row { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+  .pill {
+    font-size: 12.5px; padding: 6px 11px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--border); color: var(--fg-muted);
+  }
+  .pill b { color: var(--fg); font-weight: 600; }
+  .pill.warn { border-color: var(--amber); color: var(--amber); }
+  .pill.danger { border-color: var(--rust); color: var(--rust); }
+
+  .group { margin-bottom: 24px; }
+  .group-title {
+    font-size: 13px; font-weight: 600; color: var(--fg-muted);
+    margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+  }
+  .group-title .count { color: var(--fg-muted); font-weight: 400; }
+
+  .item {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--border);
+    border-radius: 12px; padding: 13px 14px; margin-bottom: 8px; cursor: pointer;
+  }
+  .item.fresh { border-left-color: var(--sage); }
+  .item.soon { border-left-color: var(--amber); }
+  .item.expired { border-left-color: var(--rust); }
+  .item.consumed { border-left-color: var(--border); opacity: 0.62; }
+
+  .item-main { flex: 1; min-width: 0; }
+  .item-name-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .item-name { font-size: 16px; font-weight: 600; }
+  .item.consumed .item-name { text-decoration: line-through; color: var(--fg-muted); }
+  .dday {
+    font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+    background: var(--sage-soft); color: var(--sage);
+  }
+  .item.soon .dday { background: var(--amber-soft); color: var(--amber); }
+  .item.expired .dday { background: var(--rust-soft); color: var(--rust); }
+
+  .item-meta { font-size: 12.5px; color: var(--fg-muted); margin-top: 4px; }
+  .item-remain { font-size: 12.5px; margin-top: 6px; }
+  .remain-track {
+    height: 5px; border-radius: 3px; background: var(--border); margin-top: 5px;
+    overflow: hidden; max-width: 220px;
+  }
+  .remain-fill { height: 100%; background: var(--sage); }
+  .item.soon .remain-fill { background: var(--amber); }
+  .item.expired .remain-fill { background: var(--rust); }
+
+  .item-dishes { margin-top: 7px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .dish-tag {
+    font-size: 12px; padding: 3px 9px; border-radius: 8px;
+    background: var(--bg); border: 1px solid var(--border); color: var(--fg-muted); cursor: pointer;
+  }
+  .dish-tag:hover { border-color: var(--sage); color: var(--sage); }
+  .dish-tag.active { background: var(--sage-soft); border-color: var(--sage); color: var(--sage); }
+
+  .del-btn {
+    background: none; border: none; color: var(--fg-muted); font-size: 18px;
+    cursor: pointer; padding: 4px 6px; line-height: 1; flex-shrink: 0;
+  }
+  .del-btn:hover { color: var(--rust); }
+
+  .empty { text-align: center; padding: 50px 20px; color: var(--fg-muted); }
+  .empty .serif { font-size: 18px; color: var(--fg); display: block; margin-bottom: 8px; }
+
+  details.consumed-section { margin-top: 6px; }
+  details.consumed-section summary {
+    cursor: pointer; font-size: 13px; font-weight: 600; color: var(--fg-muted);
+    padding: 6px 2px; list-style: none;
+  }
+  details.consumed-section summary::-webkit-details-marker { display: none; }
+  details.consumed-section summary:before { content: '▸ '; }
+  details.consumed-section[open] summary:before { content: '▾ '; }
+
+  /* overlay/sheet shared */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(20,18,12,0.4);
+    display: none; align-items: flex-end; justify-content: center; z-index: 10;
+  }
+  .overlay.open { display: flex; }
+  .sheet {
+    background: var(--bg); width: 100%; max-width: 480px;
+    border-radius: 18px 18px 0 0; padding: 22px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+    max-height: 90vh; overflow-y: auto;
+  }
+  @media (min-width: 560px) {
+    .overlay { align-items: center; }
+    .sheet { border-radius: 16px; }
+  }
+  .sheet h2 { font-size: 19px; margin: 0 0 16px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12.5px; color: var(--fg-muted); margin-bottom: 5px; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--surface); color: var(--fg); font-size: 15px; font-family: inherit;
+  }
+  .field textarea { resize: vertical; min-height: 70px; }
+  .field-row { display: flex; gap: 10px; }
+  .field-row .field { flex: 1; }
+  .field-row .field.narrow { flex: 0 0 92px; }
+
+  .tag-input-box {
+    display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 10px;
+    border: 1px solid var(--border); border-radius: 10px; background: var(--surface);
+  }
+  .tag-chip {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 13px;
+    padding: 4px 6px 4px 10px; border-radius: 999px; background: var(--sage-soft); color: var(--sage);
+  }
+  .tag-chip button { background: none; border: none; color: inherit; font-size: 15px; line-height: 1; cursor: pointer; padding: 0 2px; }
+  .tag-input-box input {
+    flex: 1; min-width: 90px; border: none; outline: none; background: transparent;
+    font-size: 15px; color: var(--fg); padding: 4px 2px; font-family: inherit;
+  }
+  .tag-hint { font-size: 11.5px; color: var(--fg-muted); margin-top: 5px; }
+
+  .sheet-actions { display: flex; gap: 8px; margin-top: 18px; }
+  .btn-secondary, .btn-primary {
+    flex: 1; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 600;
+    border: none; cursor: pointer; font-family: inherit;
+  }
+  .btn-secondary { background: var(--surface); border: 1px solid var(--border); color: var(--fg); }
+  .btn-primary { background: var(--sage); color: #fff; }
+  .btn-danger-text { background: none; border: none; color: var(--rust); font-size: 13px; cursor: pointer; padding: 8px 0; font-family: inherit; }
+
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+
+  .log-list { margin-bottom: 12px; }
+  .log-row {
+    display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .log-row:last-child { border-bottom: none; }
+  .log-main { flex: 1; }
+  .log-amount { font-weight: 600; }
+  .log-dish { color: var(--fg-muted); }
+  .log-date { font-size: 11.5px; color: var(--fg-muted); }
+  .log-edit-btn, .log-del-btn {
+    background: none; border: none; color: var(--fg-muted); cursor: pointer; font-size: 13px; padding: 4px 6px; font-family: inherit;
+  }
+  .log-del-btn:hover { color: var(--rust); }
+  .log-edit-btn:hover { color: var(--sage); }
+
+  .remain-banner {
+    display: flex; justify-content: space-between; align-items: baseline;
+    background: var(--sage-soft); color: var(--sage); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px;
+    font-size: 13.5px;
+  }
+  .remain-banner b { font-size: 16px; }
+  .remain-banner.consumed-flag { background: var(--rust-soft); color: var(--rust); }
+
+  .fab {
+    position: fixed; right: 20px; bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+    width: 54px; height: 54px; border-radius: 50%; background: var(--sage); color: #fff;
+    border: none; font-size: 26px; box-shadow: 0 6px 18px rgba(0,0,0,0.22); cursor: pointer; z-index: 5;
+  }
+
+  /* recipe cards */
+  .recipe-card, .diary-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px; margin-bottom: 10px; cursor: pointer;
+  }
+  .recipe-card h3 { font-size: 15.5px; margin: 0 0 6px; font-weight: 600; }
+  .recipe-card .item-dishes { margin-top: 8px; }
+  .recipe-method { font-size: 13px; color: var(--fg-muted); white-space: pre-wrap; }
+
+  .diary-date-group { margin-bottom: 20px; }
+  .diary-date-title { font-size: 13px; font-weight: 600; color: var(--fg-muted); margin-bottom: 8px; }
+  .diary-card { display: flex; gap: 10px; align-items: flex-start; }
+  .meal-badge {
+    font-size: 11.5px; font-weight: 600; padding: 3px 8px; border-radius: 999px;
+    background: var(--plum-soft); color: var(--plum); flex-shrink: 0; margin-top: 1px;
+  }
+  .diary-menu { font-weight: 600; font-size: 14.5px; }
+  .diary-note { font-size: 12.5px; color: var(--fg-muted); margin-top: 3px; }
+
+  /* receipt sheet */
+  .receipt-preview {
+    width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px;
+    border: 1px solid var(--border); margin-bottom: 10px; display: none; background: var(--surface);
+  }
+  .photo-btn {
+    display: block; width: 100%; text-align: center; padding: 14px; border: 1px dashed var(--border);
+    border-radius: 10px; color: var(--fg-muted); font-size: 13.5px; margin-bottom: 12px; cursor: pointer;
+    background: var(--surface);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><h1>냉장고 재료 노트</h1></header>
+  <p class="subhead">재료·레시피·식단을 한 곳에서</p>
+
+  <div class="tabbar">
+    <button class="tabbtn active" data-tab="ingredients">식재료</button>
+    <button class="tabbtn" data-tab="recipes">레시피</button>
+    <button class="tabbtn" data-tab="diary">식단 일지</button>
+  </div>
+
+  <!-- 식재료 TAB -->
+  <div class="tabpanel active" id="panel-ingredients">
+    <div class="toolbar">
+      <input type="text" id="search" placeholder="재료 이름으로 검색">
+      <select class="filter" id="categoryFilter"><option value="">전체 분류</option></select>
+      <select class="filter" id="dishFilter"><option value="">전체 요리</option></select>
+    </div>
+    <div class="actions-row">
+      <button class="ghost-btn" id="receiptBtn">📷 영수증으로 빠르게 추가</button>
+    </div>
+    <div class="summary-row" id="summaryRow"></div>
+    <div id="listArea"></div>
+  </div>
+
+  <!-- 레시피 TAB -->
+  <div class="tabpanel" id="panel-recipes">
+    <p class="subhead" style="margin-top:0">자주 만드는 레시피를 저장해두고 재료와 연결해보세요</p>
+    <div class="toolbar">
+      <input type="text" id="recipeSearch" placeholder="재료나 레시피 이름으로 검색">
+    </div>
+    <div id="recipeListArea"></div>
+  </div>
+
+  <!-- 식단일지 TAB -->
+  <div class="tabpanel" id="panel-diary">
+    <p class="subhead" style="margin-top:0">오늘은 뭘 먹었는지 가볍게 기록해보세요</p>
+    <div class="toolbar">
+      <input type="text" id="diarySearch" placeholder="메뉴나 재료로 검색">
+    </div>
+    <div class="toolbar">
+      <select class="filter" id="diaryMenuFilter"><option value="">전체 메뉴</option></select>
+      <select class="filter" id="diaryIngredientFilter"><option value="">전체 재료</option></select>
+      <select class="filter" id="diaryDietFilter">
+        <option value="">전체 식이 종류</option>
+        <option>다이어트식</option><option>일반 건강식</option><option>영양식</option><option>일반식</option>
+      </select>
+    </div>
+    <div id="diaryListArea"></div>
+  </div>
+</div>
+
+<button class="fab" id="fabAdd" aria-label="추가">+</button>
+
+<!-- 재료 추가/수정 시트 -->
+<div class="overlay" id="overlay">
+  <div class="sheet">
+    <h2 class="serif" id="sheetTitle">재료 추가</h2>
+
+    <div id="remainBannerWrap"></div>
+
+    <div class="field">
+      <label for="f-name">품목명</label>
+      <input type="text" id="f-name" placeholder="예: 애호박">
+    </div>
+    <div class="field">
+      <label for="f-category">분류</label>
+      <select id="f-category">
+        <option>채소</option><option>과일</option><option>육류</option><option>수산물</option>
+        <option>유제품·계란</option><option>양념·소스</option><option>반찬·완제품</option>
+        <option>냉동식품</option><option>기타</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="f-bought">구매일</label>
+        <input type="date" id="f-bought">
+      </div>
+      <div class="field">
+        <label for="f-expiry">유통기한</label>
+        <input type="date" id="f-expiry">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="f-quantity">양</label>
+        <input type="number" id="f-quantity" min="0" step="any" placeholder="예: 2">
+      </div>
+      <div class="field narrow">
+        <label for="f-unit">단위</label>
+        <input type="text" id="f-unit" placeholder="개/g/ml">
+      </div>
+      <div class="field">
+        <label for="f-price">가격(원)</label>
+        <input type="number" id="f-price" min="0" step="1" placeholder="예: 2500">
+      </div>
+    </div>
+    <div class="field">
+      <label>주로 쓰는 요리</label>
+      <div class="tag-input-box" id="dishTagBox">
+        <input type="text" id="f-dishes" placeholder="요리 이름 입력 후 Enter">
+      </div>
+      <div class="tag-hint">Enter나 쉼표로 태그를 추가하고, × 로 지울 수 있어요</div>
+    </div>
+
+    <div id="consumptionSection" style="display:none;">
+      <hr class="divider">
+      <h2 class="serif" style="font-size:16px;">소비 일지</h2>
+      <div class="log-list" id="logList"></div>
+      <div class="field-row">
+        <div class="field">
+          <label for="log-amount">쓴 양</label>
+          <input type="number" id="log-amount" min="0" step="any" placeholder="예: 0.33">
+        </div>
+        <div class="field">
+          <label for="log-date">날짜</label>
+          <input type="date" id="log-date">
+        </div>
+      </div>
+      <div class="field">
+        <label for="log-dish">어디에 썼나요</label>
+        <input type="text" id="log-dish" list="dishSuggestions" placeholder="예: 된장찌개">
+        <datalist id="dishSuggestions"></datalist>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-secondary" id="logCancelBtn" style="display:none;">취소</button>
+        <button class="btn-primary" id="logSaveBtn">일지에 기록</button>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <button class="btn-danger-text" id="deleteItemBtn" style="display:none;">이 재료 완전히 삭제</button>
+    <div class="sheet-actions">
+      <button class="btn-secondary" id="cancelBtn">닫기</button>
+      <button class="btn-primary" id="saveBtn">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 레시피 시트 -->
+<div class="overlay" id="recipeOverlay">
+  <div class="sheet">
+    <h2 class="serif" id="recipeSheetTitle">레시피 추가</h2>
+    <div class="field">
+      <label for="r-name">레시피 이름</label>
+      <input type="text" id="r-name" placeholder="예: 애호박 된장찌개">
+    </div>
+    <div class="field">
+      <label>들어가는 재료</label>
+      <div class="tag-input-box" id="recipeTagBox">
+        <input type="text" id="r-ingredients" placeholder="재료 입력 후 Enter">
+      </div>
+    </div>
+    <div class="field">
+      <label for="r-method">만드는 법 (선택)</label>
+      <textarea id="r-method" placeholder="간단한 순서나 메모"></textarea>
+    </div>
+    <button class="btn-danger-text" id="deleteRecipeBtn" style="display:none;">이 레시피 삭제</button>
+    <div class="sheet-actions">
+      <button class="btn-secondary" id="recipeCancelBtn">닫기</button>
+      <button class="btn-primary" id="recipeSaveBtn">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 식단일지 시트 -->
+<div class="overlay" id="diaryOverlay">
+  <div class="sheet">
+    <h2 class="serif" id="diarySheetTitle">식단 기록</h2>
+    <div class="field-row">
+      <div class="field">
+        <label for="d-date">날짜</label>
+        <input type="date" id="d-date">
+      </div>
+      <div class="field narrow">
+        <label for="d-meal">끼니</label>
+        <select id="d-meal">
+          <option>아침</option><option>점심</option><option>저녁</option><option>간식</option><option>야식</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>메뉴 (여러 개 추가 가능)</label>
+      <div class="tag-input-box" id="diaryMenuTagBox">
+        <input type="text" id="d-menu" placeholder="메뉴 입력 후 Enter">
+      </div>
+      <div class="tag-hint">여러 개 드셨으면 하나씩 Enter로 계속 추가하세요</div>
+    </div>
+    <div class="field">
+      <label>들어간 재료 (선택)</label>
+      <div class="tag-input-box" id="diaryIngredientTagBox">
+        <input type="text" id="d-ingredient" placeholder="재료 입력 후 Enter">
+      </div>
+    </div>
+    <div class="field">
+      <label for="d-diettype">식이 종류</label>
+      <select id="d-diettype">
+        <option>일반식</option><option>다이어트식</option><option>일반 건강식</option><option>영양식</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="d-note">메모 (선택)</label>
+      <input type="text" id="d-note" placeholder="맛, 느낌 등">
+    </div>
+    <button class="btn-danger-text" id="deleteDiaryBtn" style="display:none;">이 기록 삭제</button>
+    <div class="sheet-actions">
+      <button class="btn-secondary" id="diaryCancelBtn">닫기</button>
+      <button class="btn-primary" id="diarySaveBtn">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 영수증 빠른 추가 시트 -->
+<div class="overlay" id="receiptOverlay">
+  <div class="sheet">
+    <h2 class="serif">영수증으로 빠르게 추가</h2>
+    <p class="tag-hint" style="margin:-6px 0 12px;">사진은 옆에 띄워두고 보면서 품목명을 한 줄씩 적어주세요. 자동으로 오늰 구매, +3일 유통기한으로 등록되고 나중에 각 재료를 눌러 수정할 수 있어요.</p>
+    <label class="photo-btn" id="photoLabel" for="receiptPhoto">📷 영수증 사진 첨부 (참고용, 저장되지 않음)</label>
+    <input type="file" accept="image/*" capture="environment" id="receiptPhoto" style="display:none;">
+    <img id="receiptPreview" class="receipt-preview">
+    <div class="field-row">
+      <div class="field">
+        <label for="rc-bought">구매일</label>
+        <input type="date" id="rc-bought">
+      </div>
+      <div class="field">
+        <label for="rc-category">분류(일괄)</label>
+        <select id="rc-category">
+          <option>기타</option><option>채소</option><option>과일</option><option>육류</option><option>수산물</option>
+          <option>유제품·계란</option><option>양념·소스</option><option>반찬·완제품</option><option>냉동식품</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="rc-items">품목 (한 줄에 하나씩)</label>
+      <textarea id="rc-items" placeholder="애호박&#10;계란 한판&#10;두부" style="min-height:120px;"></textarea>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn-secondary" id="receiptCancelBtn">취소</button>
+      <button class="btn-primary" id="receiptSaveBtn">일괄 추가</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var ITEMS_KEY = 'fridge-tracker-items-v1';
+  var RECIPES_KEY = 'fridge-tracker-recipes-v1';
+  var DIARY_KEY = 'fridge-tracker-diary-v1';
+  var TAB_KEY = 'fridge-tracker-active-tab';
+
+  var items = [];
+  var recipes = [];
+  var diary = [];
+
+  var editingId = null;
+  var currentDishTags = [];
+  var editingLogId = null;
+
+  var editingRecipeId = null;
+  var currentRecipeTags = [];
+
+  var editingDiaryId = null;
+  var currentDiaryMenuTags = [];
+  var currentDiaryIngredientTags = [];
+
+  function loadAll() {
+    try { items = JSON.parse(localStorage.getItem(ITEMS_KEY) || '[]'); } catch(e) { items = []; }
+    try { recipes = JSON.parse(localStorage.getItem(RECIPES_KEY) || '[]'); } catch(e) { recipes = []; }
+    try { diary = JSON.parse(localStorage.getItem(DIARY_KEY) || '[]'); } catch(e) { diary = []; }
+    items.forEach(function(it) {
+      if (!Array.isArray(it.dishes)) it.dishes = [];
+      if (!Array.isArray(it.consumption)) it.consumption = [];
+      if (it.quantity === undefined) it.quantity = null;
+      if (it.unit === undefined) it.unit = '';
+      if (it.price === undefined) it.price = null;
+    });
+    diary.forEach(function(d) {
+      if (!Array.isArray(d.menus)) d.menus = d.menu ? [d.menu] : [];
+      if (!Array.isArray(d.ingredients)) d.ingredients = [];
+      if (!d.dietType) d.dietType = '일반식';
+    });
+  }
+  function saveItems() { try { localStorage.setItem(ITEMS_KEY, JSON.stringify(items)); } catch(e) {} }
+  function saveRecipes() { try { localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes)); } catch(e) {} }
+  function saveDiary() { try { localStorage.setItem(DIARY_KEY, JSON.stringify(diary)); } catch(e) {} }
+
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function todayStr() { return new Date().toISOString().slice(0,10); }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function(c) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function fmtDate(s) { if (!s) return '-'; var p = s.split('-'); return p[0] + '.' + p[1] + '.' + p[2]; }
+  function daysUntil(dateStr) {
+    var today = new Date(); today.setHours(0,0,0,0);
+    var target = new Date(dateStr + 'T00:00:00');
+    return Math.round((target - today) / 86400000);
+  }
+  function ddayLabel(d) {
+    if (d < 0) return '기한 ' + Math.abs(d) + '일 지남';
+    if (d === 0) return '오늘까지';
+    return 'D-' + d;
+  }
+  function statusClass(d) {
+    if (d < 0) return 'expired';
+    if (d <= 3) return 'soon';
+    return 'fresh';
+  }
+
+  function totalConsumed(it) {
+    return (it.consumption || []).reduce(function(sum, c) { return sum + (Number(c.amount) || 0); }, 0);
+  }
+  function remainingOf(it) {
+    if (it.quantity === null || it.quantity === undefined || it.quantity === '') return null;
+    var r = Number(it.quantity) - totalConsumed(it);
+    return Math.round(r * 1000) / 1000;
+  }
+  function isConsumed(it) {
+    var r = remainingOf(it);
+    return r !== null && r <= 0;
+  }
+
+  /* ---------------- TABS ---------------- */
+  function setTab(tab) {
+    document.querySelectorAll('.tabbtn').forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-tab') === tab); });
+    document.querySelectorAll('.tabpanel').forEach(function(p) { p.classList.toggle('active', p.id === 'panel-' + tab); });
+    document.getElementById('fabAdd').style.display = 'flex';
+    document.getElementById('fabAdd').setAttribute('data-for', tab);
+    try { localStorage.setItem(TAB_KEY, tab); } catch(e) {}
+    if (tab === 'recipes') renderRecipes();
+    if (tab === 'diary') renderDiary();
+    if (tab === 'ingredients') render();
+  }
+  document.querySelectorAll('.tabbtn').forEach(function(b) {
+    b.addEventListener('click', function() { setTab(b.getAttribute('data-tab')); });
+  });
+
+  document.getElementById('fabAdd').addEventListener('click', function() {
+    var t = this.getAttribute('data-for') || 'ingredients';
+    if (t === 'ingredients') openSheet(null);
+    else if (t === 'recipes') openRecipeSheet(null);
+    else openDiarySheet(null);
+  });
+
+  /* ============ 식재료 ============ */
+  function populateCategoryFilter() {
+    var sel = document.getElementById('categoryFilter');
+    var cats = [];
+    items.forEach(function(it) { if (cats.indexOf(it.category) === -1) cats.push(it.category); });
+    var current = sel.value;
+    sel.innerHTML = '<option value="">전체 분류</option>' +
+      cats.map(function(c) { return '<option value="' + escapeHtml(c) + '">' + escapeHtml(c) + '</option>'; }).join('');
+    sel.value = cats.indexOf(current) !== -1 ? current : '';
+  }
+  function populateDishFilter() {
+    var sel = document.getElementById('dishFilter');
+    var dishes = [];
+    items.forEach(function(it) { (it.dishes||[]).forEach(function(d){ if(dishes.indexOf(d)===-1) dishes.push(d); }); });
+    var current = sel.value;
+    sel.innerHTML = '<option value="">전체 요리</option>' +
+      dishes.map(function(d) { return '<option value="' + escapeHtml(d) + '">' + escapeHtml(d) + '</option>'; }).join('');
+    sel.value = dishes.indexOf(current) !== -1 ? current : '';
+  }
+
+  function itemRowHtml(it, consumedStyle) {
+    var d = daysUntil(it.expiry);
+    var cls = statusClass(d) + (consumedStyle ? ' consumed' : '');
+    var remain = remainingOf(it);
+    var dishesHtml = (it.dishes && it.dishes.length)
+      ? '<div class="item-dishes">' + it.dishes.map(function(dsh) {
+          var isActive = dsh === document.getElementById('dishFilter').value;
+          return '<span class="dish-tag' + (isActive?' active':'') + '" data-dish="' + escapeHtml(dsh) + '">' + escapeHtml(dsh) + '</span>';
+        }).join('') + '</div>'
+      : '';
+    var metaBits = ['구매 ' + fmtDate(it.bought), '유통기한 ' + fmtDate(it.expiry)];
+    if (it.price) metaBits.push(Number(it.price).toLocaleString() + '원');
+    var remainHtml = '';
+    if (remain !== null) {
+      var pct = it.quantity > 0 ? Math.max(0, Math.min(100, (remain / Number(it.quantity)) * 100)) : 0;
+      remainHtml = '<div class="item-remain">잔여 ' + remain + (it.unit?(' '+escapeHtml(it.unit)):'') + ' / ' + it.quantity + (it.unit?(' '+escapeHtml(it.unit)):'') +
+        '</div><div class="remain-track"><div class="remain-fill" style="width:' + pct + '%"></div></div>';
+    }
+    return (
+      '<div class="item ' + cls + '" data-id="' + it.id + '">' +
+        '<div class="item-main">' +
+          '<div class="item-name-row"><span class="item-name">' + escapeHtml(it.name) + '</span>' +
+            (consumedStyle ? '' : '<span class="dday">' + ddayLabel(d) + '</span>') + '</div>' +
+          '<div class="item-meta">' + metaBits.join(' · ') + '</div>' +
+          remainHtml + dishesHtml +
+        '</div>' +
+        '<button class="del-btn" data-del="' + it.id + '" aria-label="삭제">×</button>' +
+      '</div>'
+    );
+  }
+
+  function render() {
+    populateCategoryFilter();
+    populateDishFilter();
+
+    var q = document.getElementById('search').value.trim().toLowerCase();
+    var catFilter = document.getElementById('categoryFilter').value;
+    var dishFilter = document.getElementById('dishFilter').value;
+
+    var matches = function(it) {
+      var matchQ = !q || it.name.toLowerCase().indexOf(q) !== -1;
+      var matchC = !catFilter || it.category === catFilter;
+      var matchD = !dishFilter || (it.dishes||[]).indexOf(dishFilter) !== -1;
+      return matchQ && matchC && matchD;
+    };
+
+    var active = items.filter(function(it) { return !isConsumed(it) && matches(it); });
+    var consumedList = items.filter(function(it) { return isConsumed(it) && matches(it); });
+
+    var soon = items.filter(function(it) { var dd = daysUntil(it.expiry); return !isConsumed(it) && dd <= 3 && dd >= 0; }).length;
+    var expired = items.filter(function(it) { return !isConsumed(it) && daysUntil(it.expiry) < 0; }).length;
+    document.getElementById('summaryRow').innerHTML =
+      '<span class="pill">보유 <b>' + active.length + '</b>개</span>' +
+      (soon > 0 ? '<span class="pill warn">임박 <b>' + soon + '</b>개</span>' : '') +
+      (expired > 0 ? '<span class="pill danger">기한 지남 <b>' + expired + '</b>개</span>' : '');
+
+    var listArea = document.getElementById('listArea');
+
+    if (items.length === 0) {
+      listArea.innerHTML = '<div class="empty"><span class="serif">아직 등록된 재료가 없어요</span>오른쪽 아래 + 버튼이나 영수증으로 빠르게 추가해보세요.</div>';
+      return;
+    }
+
+    var html = '';
+    if (active.length === 0) {
+      html += '<div class="empty">검색 결과가 없어요.</div>';
+    } else {
+      active.sort(function(a,b){ return daysUntil(a.expiry) - daysUntil(b.expiry); });
+      var groups = {}, order = [];
+      active.forEach(function(it) {
+        if (!groups[it.category]) { groups[it.category] = []; order.push(it.category); }
+        groups[it.category].push(it);
+      });
+      html += order.map(function(cat) {
+        return '<div class="group"><div class="group-title">' + escapeHtml(cat) + ' <span class="count">(' + groups[cat].length + ')</span></div>' +
+          groups[cat].map(function(it){ return itemRowHtml(it, false); }).join('') + '</div>';
+      }).join('');
+    }
+
+    if (consumedList.length > 0) {
+      html += '<details class="consumed-section"><summary>소진한 재료 (' + consumedList.length + ')</summary>' +
+        consumedList.map(function(it){ return itemRowHtml(it, true); }).join('') + '</details>';
+    }
+
+    listArea.innerHTML = html;
+  }
+
+  function renderDishChips() {
+    var box = document.getElementById('dishTagBox');
+    var input = document.getElementById('f-dishes');
+    box.querySelectorAll('.tag-chip').forEach(function(el){ el.remove(); });
+    currentDishTags.forEach(function(tag) {
+      var chip = document.createElement('span');
+      chip.className = 'tag-chip';
+      chip.innerHTML = escapeHtml(tag) + ' <button type="button" data-tag="' + escapeHtml(tag) + '">×</button>';
+      box.insertBefore(chip, input);
+    });
+  }
+  function addDishTag(raw) {
+    var tag = raw.trim();
+    if (!tag) return;
+    if (currentDishTags.indexOf(tag) === -1) currentDishTags.push(tag);
+    document.getElementById('f-dishes').value = '';
+    renderDishChips();
+  }
+  document.getElementById('f-dishes').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addDishTag(this.value.replace(/,$/, '')); }
+    else if (e.key === 'Backspace' && this.value === '' && currentDishTags.length) { currentDishTags.pop(); renderDishChips(); }
+  });
+  document.getElementById('f-dishes').addEventListener('blur', function() { if (this.value.trim()) addDishTag(this.value); });
+  document.getElementById('dishTagBox').addEventListener('click', function(e) {
+    var t = e.target.getAttribute('data-tag');
+    if (t !== null) { currentDishTags = currentDishTags.filter(function(tag){ return tag !== t; }); renderDishChips(); }
+    else if (e.target === this) document.getElementById('f-dishes').focus();
+  });
+
+  function renderLogList(it) {
+    var wrap = document.getElementById('logList');
+    var logs = (it.consumption || []).slice().sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
+    if (logs.length === 0) { wrap.innerHTML = '<div class="tag-hint">아직 기록이 없어요.</div>'; return; }
+    wrap.innerHTML = logs.map(function(l) {
+      return '<div class="log-row" data-log-id="' + l.id + '">' +
+        '<div class="log-main"><span class="log-amount">' + l.amount + (it.unit?(' '+escapeHtml(it.unit)):'') + '</span>' +
+          (l.dish ? ' <span class="log-dish">· ' + escapeHtml(l.dish) + '</span>' : '') +
+          '<div class="log-date">' + fmtDate(l.date) + '</div></div>' +
+        '<button class="log-edit-btn" data-log-edit="' + l.id + '">수정</button>' +
+        '<button class="log-del-btn" data-log-del="' + l.id + '">삭제</button>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderRemainBanner(it) {
+    var wrap = document.getElementById('remainBannerWrap');
+    var remain = remainingOf(it);
+    if (remain === null) { wrap.innerHTML = ''; return; }
+    var consumedFlag = remain <= 0;
+    wrap.innerHTML = '<div class="remain-banner' + (consumedFlag?' consumed-flag':'') + '">' +
+      '<span>' + (consumedFlag ? '이 재료는 모두 소진됐어요' : '현재 남은 양') + '</span>' +
+      (consumedFlag ? '' : '<b>' + remain + (it.unit?(' '+escapeHtml(it.unit)):'') + '</b>') +
+      '</div>';
+  }
+
+  function refreshDishSuggestions(it) {
+    var dl = document.getElementById('dishSuggestions');
+    var all = [];
+    (it && it.dishes ? it.dishes : currentDishTags).forEach(function(d){ if(all.indexOf(d)===-1) all.push(d); });
+    dl.innerHTML = all.map(function(d){ return '<option value="' + escapeHtml(d) + '">'; }).join('');
+  }
+
+  function resetLogForm() {
+    editingLogId = null;
+    document.getElementById('log-amount').value = '';
+    document.getElementById('log-date').value = todayStr();
+    document.getElementById('log-dish').value = '';
+    document.getElementById('logSaveBtn').textContent = '일지에 기록';
+    document.getElementById('logCancelBtn').style.display = 'none';
+  }
+
+  function openSheet(item) {
+    editingId = item ? item.id : null;
+    document.getElementById('sheetTitle').textContent = item ? '재료 수정' : '재료 추가';
+    document.getElementById('f-name').value = item ? item.name : '';
+    document.getElementById('f-category').value = item ? item.category : '채소';
+    document.getElementById('f-bought').value = item ? item.bought : todayStr();
+    document.getElementById('f-expiry').value = item ? item.expiry : '';
+    document.getElementById('f-quantity').value = item && item.quantity !== null ? item.quantity : '';
+    document.getElementById('f-unit').value = item ? item.unit || '' : '';
+    document.getElementById('f-price').value = item && item.price !== null ? item.price : '';
+    currentDishTags = item && item.dishes ? item.dishes.slice() : [];
+    document.getElementById('f-dishes').value = '';
+    renderDishChips();
+
+    document.getElementById('deleteItemBtn').style.display = item ? 'block' : 'none';
+
+    if (item) {
+      document.getElementById('consumptionSection').style.display = 'block';
+      renderRemainBanner(item);
+      renderLogList(item);
+      refreshDishSuggestions(item);
+      resetLogForm();
+    } else {
+      document.getElementById('consumptionSection').style.display = 'none';
+      document.getElementById('remainBannerWrap').innerHTML = '';
+    }
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeSheet() {
+    document.getElementById('overlay').classList.remove('open');
+    editingId = null; currentDishTags = []; editingLogId = null;
+  }
+
+  function handleSave() {
+    var name = document.getElementById('f-name').value.trim();
+    if (!name) { document.getElementById('f-name').focus(); return; }
+    var category = document.getElementById('f-category').value;
+    var bought = document.getElementById('f-bought').value;
+    var expiry = document.getElementById('f-expiry').value;
+    var qtyRaw = document.getElementById('f-quantity').value;
+    var quantity = qtyRaw === '' ? null : Number(qtyRaw);
+    var unit = document.getElementById('f-unit').value.trim();
+    var priceRaw = document.getElementById('f-price').value;
+    var price = priceRaw === '' ? null : Number(priceRaw);
+    var leftover = document.getElementById('f-dishes').value.trim();
+    if (leftover) addDishTag(leftover);
+    var dishes = currentDishTags.slice();
+
+    if (!expiry) expiry = bought || todayStr();
+
+    if (editingId) {
+      var idx = items.findIndex(function(it){ return it.id === editingId; });
+      if (idx !== -1) {
+        items[idx].name = name; items[idx].category = category; items[idx].bought = bought;
+        items[idx].expiry = expiry; items[idx].quantity = quantity; items[idx].unit = unit;
+        items[idx].price = price; items[idx].dishes = dishes;
+      }
+    } else {
+      items.push({ id: uid(), name: name, category: category, bought: bought, expiry: expiry,
+        quantity: quantity, unit: unit, price: price, dishes: dishes, consumption: [] });
+    }
+    saveItems();
+    closeSheet();
+    render();
+  }
+
+  document.getElementById('cancelBtn').addEventListener('click', closeSheet);
+  document.getElementById('saveBtn').addEventListener('click', handleSave);
+  document.getElementById('deleteItemBtn').addEventListener('click', function() {
+    if (!editingId) return;
+    items = items.filter(function(it){ return it.id !== editingId; });
+    saveItems(); closeSheet(); render();
+  });
+  document.getElementById('overlay').addEventListener('click', function(e) { if (e.target.id === 'overlay') closeSheet(); });
+
+  document.getElementById('search').addEventListener('input', render);
+  document.getElementById('categoryFilter').addEventListener('change', render);
+  document.getElementById('dishFilter').addEventListener('change', render);
+
+  document.getElementById('listArea').addEventListener('click', function(e) {
+    var delId = e.target.getAttribute('data-del');
+    if (delId) { e.stopPropagation(); items = items.filter(function(it){ return it.id !== delId; }); saveItems(); render(); return; }
+    var dishTag = e.target.getAttribute('data-dish');
+    if (dishTag !== null) {
+      e.stopPropagation();
+      var sel = document.getElementById('dishFilter');
+      sel.value = (sel.value === dishTag) ? '' : dishTag;
+      render(); return;
+    }
+    var row = e.target.closest('.item');
+    if (row) {
+      var id = row.getAttribute('data-id');
+      var item = items.find(function(it){ return it.id === id; });
+      if (item) openSheet(item);
+    }
+  });
+
+  /* 소비일지 로그 저장/수정/삭제 */
+  document.getElementById('logSaveBtn').addEventListener('click', function() {
+    if (!editingId) return;
+    var idx = items.findIndex(function(it){ return it.id === editingId; });
+    if (idx === -1) return;
+    var amount = Number(document.getElementById('log-amount').value);
+    if (!amount || amount <= 0) { document.getElementById('log-amount').focus(); return; }
+    var date = document.getElementById('log-date').value || todayStr();
+    var dish = document.getElementById('log-dish').value.trim();
+
+    if (editingLogId) {
+      var lidx = items[idx].consumption.findIndex(function(l){ return l.id === editingLogId; });
+      if (lidx !== -1) items[idx].consumption[lidx] = { id: editingLogId, amount: amount, date: date, dish: dish };
+    } else {
+      items[idx].consumption.push({ id: uid(), amount: amount, date: date, dish: dish });
+    }
+    saveItems();
+    renderRemainBanner(items[idx]);
+    renderLogList(items[idx]);
+    resetLogForm();
+    render();
+  });
+  document.getElementById('logCancelBtn').addEventListener('click', resetLogForm);
+  document.getElementById('logList').addEventListener('click', function(e) {
+    var editId = e.target.getAttribute('data-log-edit');
+    var delId = e.target.getAttribute('data-log-del');
+    if (!editingId) return;
+    var idx = items.findIndex(function(it){ return it.id === editingId; });
+    if (idx === -1) return;
+    if (delId) {
+      items[idx].consumption = items[idx].consumption.filter(function(l){ return l.id !== delId; });
+      saveItems(); renderRemainBanner(items[idx]); renderLogList(items[idx]); resetLogForm(); render();
+    } else if (editId) {
+      var log = items[idx].consumption.find(function(l){ return l.id === editId; });
+      if (log) {
+        editingLogId = log.id;
+        document.getElementById('log-amount').value = log.amount;
+        document.getElementById('log-date').value = log.date;
+        document.getElementById('log-dish').value = log.dish || '';
+        document.getElementById('logSaveBtn').textContent = '수정 저장';
+        document.getElementById('logCancelBtn').style.display = 'inline-block';
+      }
+    }
+  });
+
+  /* ============ 레시피 ============ */
+  function renderRecipes() {
+    var area = document.getElementById('recipeListArea');
+    if (recipes.length === 0) {
+      area.innerHTML = '<div class="empty"><span class="serif">저장된 레시피가 없어요</span>+ 버튼으로 자주 만드는 요리를 등록해보세요.</div>';
+      return;
+    }
+    var q = (document.getElementById('recipeSearch').value || '').trim().toLowerCase();
+    var filtered = recipes.filter(function(r) {
+      if (!q) return true;
+      if (r.name.toLowerCase().indexOf(q) !== -1) return true;
+      return (r.ingredients || []).some(function(ing) { return ing.toLowerCase().indexOf(q) !== -1; });
+    });
+    if (filtered.length === 0) {
+      area.innerHTML = '<div class="empty">검색 결과가 없어요.</div>';
+      return;
+    }
+    area.innerHTML = filtered.map(function(r) {
+      var tagsHtml = (r.ingredients && r.ingredients.length)
+        ? '<div class="item-dishes">' + r.ingredients.map(function(t){ return '<span class="dish-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div>'
+        : '';
+      return '<div class="recipe-card" data-id="' + r.id + '"><h3>' + escapeHtml(r.name) + '</h3>' +
+        tagsHtml + (r.method ? '<div class="recipe-method">' + escapeHtml(r.method) + '</div>' : '') + '</div>';
+    }).join('');
+  }
+  function renderRecipeTagChips() {
+    var box = document.getElementById('recipeTagBox');
+    var input = document.getElementById('r-ingredients');
+    box.querySelectorAll('.tag-chip').forEach(function(el){ el.remove(); });
+    currentRecipeTags.forEach(function(tag) {
+      var chip = document.createElement('span');
+      chip.className = 'tag-chip';
+      chip.innerHTML = escapeHtml(tag) + ' <button type="button" data-rtag="' + escapeHtml(tag) + '">×</button>';
+      box.insertBefore(chip, input);
+    });
+  }
+  function addRecipeTag(raw) {
+    var tag = raw.trim();
+    if (!tag) return;
+    if (currentRecipeTags.indexOf(tag) === -1) currentRecipeTags.push(tag);
+    document.getElementById('r-ingredients').value = '';
+    renderRecipeTagChips();
+  }
+  document.getElementById('r-ingredients').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addRecipeTag(this.value.replace(/,$/, '')); }
+    else if (e.key === 'Backspace' && this.value === '' && currentRecipeTags.length) { currentRecipeTags.pop(); renderRecipeTagChips(); }
+  });
+  document.getElementById('r-ingredients').addEventListener('blur', function() { if (this.value.trim()) addRecipeTag(this.value); });
+  document.getElementById('recipeTagBox').addEventListener('click', function(e) {
+    var t = e.target.getAttribute('data-rtag');
+    if (t !== null) { currentRecipeTags = currentRecipeTags.filter(function(tag){ return tag !== t; }); renderRecipeTagChips(); }
+    else if (e.target === this) document.getElementById('r-ingredients').focus();
+  });
+
+  function openRecipeSheet(recipe) {
+    editingRecipeId = recipe ? recipe.id : null;
+    document.getElementById('recipeSheetTitle').textContent = recipe ? '레시피 수정' : '레시피 추가';
+    document.getElementById('r-name').value = recipe ? recipe.name : '';
+    document.getElementById('r-method').value = recipe ? (recipe.method || '') : '';
+    currentRecipeTags = recipe && recipe.ingredients ? recipe.ingredients.slice() : [];
+    document.getElementById('r-ingredients').value = '';
+    renderRecipeTagChips();
+    document.getElementById('deleteRecipeBtn').style.display = recipe ? 'block' : 'none';
+    document.getElementById('recipeOverlay').classList.add('open');
+  }
+  function closeRecipeSheet() {
+    document.getElementById('recipeOverlay').classList.remove('open');
+    editingRecipeId = null; currentRecipeTags = [];
+  }
+  document.getElementById('recipeCancelBtn').addEventListener('click', closeRecipeSheet);
+  document.getElementById('recipeOverlay').addEventListener('click', function(e){ if (e.target.id === 'recipeOverlay') closeRecipeSheet(); });
+  document.getElementById('recipeSaveBtn').addEventListener('click', function() {
+    var name = document.getElementById('r-name').value.trim();
+    if (!name) { document.getElementById('r-name').focus(); return; }
+    var leftover = document.getElementById('r-ingredients').value.trim();
+    if (leftover) addRecipeTag(leftover);
+    var method = document.getElementById('r-method').value.trim();
+    var ingredients = currentRecipeTags.slice();
+    if (editingRecipeId) {
+      var idx = recipes.findIndex(function(r){ return r.id === editingRecipeId; });
+      if (idx !== -1) recipes[idx] = { id: editingRecipeId, name: name, ingredients: ingredients, method: method };
+    } else {
+      recipes.push({ id: uid(), name: name, ingredients: ingredients, method: method });
+    }
+    saveRecipes(); closeRecipeSheet(); renderRecipes();
+  });
+  document.getElementById('deleteRecipeBtn').addEventListener('click', function() {
+    if (!editingRecipeId) return;
+    recipes = recipes.filter(function(r){ return r.id !== editingRecipeId; });
+    saveRecipes(); closeRecipeSheet(); renderRecipes();
+  });
+  document.getElementById('recipeSearch').addEventListener('input', renderRecipes);
+  document.getElementById('recipeListArea').addEventListener('click', function(e) {
+    var card = e.target.closest('.recipe-card');
+    if (card) {
+      var r = recipes.find(function(x){ return x.id === card.getAttribute('data-id'); });
+      if (r) openRecipeSheet(r);
+    }
+  });
+
+  /* ============ 식단일지 ============ */
+  function populateDiaryFilters() {
+    var menuSel = document.getElementById('diaryMenuFilter');
+    var ingSel = document.getElementById('diaryIngredientFilter');
+    var menus = [], ings = [];
+    diary.forEach(function(d) {
+      (d.menus||[]).forEach(function(m){ if (menus.indexOf(m) === -1) menus.push(m); });
+      (d.ingredients||[]).forEach(function(i){ if (ings.indexOf(i) === -1) ings.push(i); });
+    });
+    var curM = menuSel.value, curI = ingSel.value;
+    menuSel.innerHTML = '<option value="">전체 메뉴</option>' + menus.map(function(m){ return '<option value="' + escapeHtml(m) + '">' + escapeHtml(m) + '</option>'; }).join('');
+    menuSel.value = menus.indexOf(curM) !== -1 ? curM : '';
+    ingSel.innerHTML = '<option value="">전체 재료</option>' + ings.map(function(i){ return '<option value="' + escapeHtml(i) + '">' + escapeHtml(i) + '</option>'; }).join('');
+    ingSel.value = ings.indexOf(curI) !== -1 ? curI : '';
+  }
+
+  function renderDiary() {
+    var area = document.getElementById('diaryListArea');
+    populateDiaryFilters();
+    if (diary.length === 0) {
+      area.innerHTML = '<div class="empty"><span class="serif">기록된 식단이 없어요</span>+ 버튼으로 오늘 먹은 걸 기록해보세요.</div>';
+      return;
+    }
+    var q = (document.getElementById('diarySearch').value || '').trim().toLowerCase();
+    var menuFilter = document.getElementById('diaryMenuFilter').value;
+    var ingFilter = document.getElementById('diaryIngredientFilter').value;
+    var dietFilter = document.getElementById('diaryDietFilter').value;
+
+    var filtered = diary.filter(function(d) {
+      var menus = d.menus || [], ings = d.ingredients || [];
+      var matchQ = !q || menus.some(function(m){ return m.toLowerCase().indexOf(q) !== -1; }) ||
+                   ings.some(function(i){ return i.toLowerCase().indexOf(q) !== -1; });
+      var matchMenu = !menuFilter || menus.indexOf(menuFilter) !== -1;
+      var matchIng = !ingFilter || ings.indexOf(ingFilter) !== -1;
+      var matchDiet = !dietFilter || d.dietType === dietFilter;
+      return matchQ && matchMenu && matchIng && matchDiet;
+    });
+
+    if (filtered.length === 0) {
+      area.innerHTML = '<div class="empty">검색 결과가 없어요.</div>';
+      return;
+    }
+
+    var sorted = filtered.slice().sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
+    var groups = {}, order = [];
+    sorted.forEach(function(d) { if (!groups[d.date]) { groups[d.date] = []; order.push(d.date); } groups[d.date].push(d); });
+    area.innerHTML = order.map(function(date) {
+      return '<div class="diary-date-group"><div class="diary-date-title">' + fmtDate(date) + '</div>' +
+        groups[date].map(function(d) {
+          var menusHtml = (d.menus||[]).map(function(m){ return escapeHtml(m); }).join(', ');
+          var ingHtml = (d.ingredients && d.ingredients.length)
+            ? '<div class="item-dishes">' + d.ingredients.map(function(i){ return '<span class="dish-tag">' + escapeHtml(i) + '</span>'; }).join('') + '</div>'
+            : '';
+          return '<div class="diary-card" data-id="' + d.id + '"><span class="meal-badge">' + escapeHtml(d.meal) + '</span>' +
+            '<div><div class="diary-menu">' + menusHtml + '</div>' +
+            '<div class="diary-note">' + escapeHtml(d.dietType || '일반식') + '</div>' +
+            ingHtml +
+            (d.note ? '<div class="diary-note">' + escapeHtml(d.note) + '</div>' : '') + '</div></div>';
+        }).join('') + '</div>';
+    }).join('');
+  }
+
+  function renderDiaryMenuChips() {
+    var box = document.getElementById('diaryMenuTagBox');
+    var input = document.getElementById('d-menu');
+    box.querySelectorAll('.tag-chip').forEach(function(el){ el.remove(); });
+    currentDiaryMenuTags.forEach(function(tag) {
+      var chip = document.createElement('span');
+      chip.className = 'tag-chip';
+      chip.innerHTML = escapeHtml(tag) + ' <button type="button" data-dmtag="' + escapeHtml(tag) + '">×</button>';
+      box.insertBefore(chip, input);
+    });
+  }
+  function addDiaryMenuTag(raw) {
+    var tag = raw.trim();
+    if (!tag) return;
+    if (currentDiaryMenuTags.indexOf(tag) === -1) currentDiaryMenuTags.push(tag);
+    document.getElementById('d-menu').value = '';
+    renderDiaryMenuChips();
+  }
+  document.getElementById('d-menu').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addDiaryMenuTag(this.value.replace(/,$/, '')); }
+    else if (e.key === 'Backspace' && this.value === '' && currentDiaryMenuTags.length) { currentDiaryMenuTags.pop(); renderDiaryMenuChips(); }
+  });
+  document.getElementById('d-menu').addEventListener('blur', function() { if (this.value.trim()) addDiaryMenuTag(this.value); });
+  document.getElementById('diaryMenuTagBox').addEventListener('click', function(e) {
+    var t = e.target.getAttribute('data-dmtag');
+    if (t !== null) { currentDiaryMenuTags = currentDiaryMenuTags.filter(function(tag){ return tag !== t; }); renderDiaryMenuChips(); }
+    else if (e.target === this) document.getElementById('d-menu').focus();
+  });
+
+  function renderDiaryIngredientChips() {
+    var box = document.getElementById('diaryIngredientTagBox');
+    var input = document.getElementById('d-ingredient');
+    box.querySelectorAll('.tag-chip').forEach(function(el){ el.remove(); });
+    currentDiaryIngredientTags.forEach(function(tag) {
+      var chip = document.createElement('span');
+      chip.className = 'tag-chip';
+      chip.innerHTML = escapeHtml(tag) + ' <button type="button" data-ditag="' + escapeHtml(tag) + '">×</button>';
+      box.insertBefore(chip, input);
+    });
+  }
+  function addDiaryIngredientTag(raw) {
+    var tag = raw.trim();
+    if (!tag) return;
+    if (currentDiaryIngredientTags.indexOf(tag) === -1) currentDiaryIngredientTags.push(tag);
+    document.getElementById('d-ingredient').value = '';
+    renderDiaryIngredientChips();
+  }
+  document.getElementById('d-ingredient').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addDiaryIngredientTag(this.value.replace(/,$/, '')); }
+    else if (e.key === 'Backspace' && this.value === '' && currentDiaryIngredientTags.length) { currentDiaryIngredientTags.pop(); renderDiaryIngredientChips(); }
+  });
+  document.getElementById('d-ingredient').addEventListener('blur', function() { if (this.value.trim()) addDiaryIngredientTag(this.value); });
+  document.getElementById('diaryIngredientTagBox').addEventListener('click', function(e) {
+    var t = e.target.getAttribute('data-ditag');
+    if (t !== null) { currentDiaryIngredientTags = currentDiaryIngredientTags.filter(function(tag){ return tag !== t; }); renderDiaryIngredientChips(); }
+    else if (e.target === this) document.getElementById('d-ingredient').focus();
+  });
+
+  function openDiarySheet(entry) {
+    editingDiaryId = entry ? entry.id : null;
+    document.getElementById('diarySheetTitle').textContent = entry ? '식단 수정' : '식단 기록';
+    document.getElementById('d-date').value = entry ? entry.date : todayStr();
+    document.getElementById('d-meal').value = entry ? entry.meal : '점심';
+    document.getElementById('d-diettype').value = entry ? (entry.dietType || '일반식') : '일반식';
+    document.getElementById('d-note').value = entry ? (entry.note || '') : '';
+    currentDiaryMenuTags = entry && entry.menus ? entry.menus.slice() : [];
+    currentDiaryIngredientTags = entry && entry.ingredients ? entry.ingredients.slice() : [];
+    document.getElementById('d-menu').value = '';
+    document.getElementById('d-ingredient').value = '';
+    renderDiaryMenuChips();
+    renderDiaryIngredientChips();
+    document.getElementById('deleteDiaryBtn').style.display = entry ? 'block' : 'none';
+    document.getElementById('diaryOverlay').classList.add('open');
+  }
+  function closeDiarySheet() {
+    document.getElementById('diaryOverlay').classList.remove('open');
+    editingDiaryId = null; currentDiaryMenuTags = []; currentDiaryIngredientTags = [];
+  }
+  document.getElementById('diaryCancelBtn').addEventListener('click', closeDiarySheet);
+  document.getElementById('diaryOverlay').addEventListener('click', function(e){ if (e.target.id === 'diaryOverlay') closeDiarySheet(); });
+  document.getElementById('diarySaveBtn').addEventListener('click', function() {
+    var leftoverMenu = document.getElementById('d-menu').value.trim();
+    if (leftoverMenu) addDiaryMenuTag(leftoverMenu);
+    if (currentDiaryMenuTags.length === 0) { document.getElementById('d-menu').focus(); return; }
+    var leftoverIng = document.getElementById('d-ingredient').value.trim();
+    if (leftoverIng) addDiaryIngredientTag(leftoverIng);
+    var date = document.getElementById('d-date').value || todayStr();
+    var meal = document.getElementById('d-meal').value;
+    var dietType = document.getElementById('d-diettype').value;
+    var note = document.getElementById('d-note').value.trim();
+    var menus = currentDiaryMenuTags.slice();
+    var ingredients = currentDiaryIngredientTags.slice();
+    if (editingDiaryId) {
+      var idx = diary.findIndex(function(d){ return d.id === editingDiaryId; });
+      if (idx !== -1) diary[idx] = { id: editingDiaryId, date: date, meal: meal, menus: menus, ingredients: ingredients, dietType: dietType, note: note };
+    } else {
+      diary.push({ id: uid(), date: date, meal: meal, menus: menus, ingredients: ingredients, dietType: dietType, note: note });
+    }
+    saveDiary(); closeDiarySheet(); renderDiary();
+  });
+  document.getElementById('deleteDiaryBtn').addEventListener('click', function() {
+    if (!editingDiaryId) return;
+    diary = diary.filter(function(d){ return d.id !== editingDiaryId; });
+    saveDiary(); closeDiarySheet(); renderDiary();
+  });
+  document.getElementById('diarySearch').addEventListener('input', renderDiary);
+  document.getElementById('diaryMenuFilter').addEventListener('change', renderDiary);
+  document.getElementById('diaryIngredientFilter').addEventListener('change', renderDiary);
+  document.getElementById('diaryDietFilter').addEventListener('change', renderDiary);
+  document.getElementById('diaryListArea').addEventListener('click', function(e) {
+    var card = e.target.closest('.diary-card');
+    if (card) {
+      var d = diary.find(function(x){ return x.id === card.getAttribute('data-id'); });
+      if (d) openDiarySheet(d);
+    }
+  });
+
+  /* ============ 영수증 빠른 추가 ============ */
+  document.getElementById('receiptBtn').addEventListener('click', function() {
+    document.getElementById('rc-bought').value = todayStr();
+    document.getElementById('rc-items').value = '';
+    document.getElementById('receiptPreview').style.display = 'none';
+    document.getElementById('receiptPhoto').value = '';
+    document.getElementById('receiptOverlay').classList.add('open');
+  });
+  document.getElementById('receiptCancelBtn').addEventListener('click', function() {
+    document.getElementById('receiptOverlay').classList.remove('open');
+  });
+  document.getElementById('receiptOverlay').addEventListener('click', function(e){ if (e.target.id === 'receiptOverlay') this.classList.remove('open'); });
+  document.getElementById('receiptPhoto').addEventListener('change', function(e) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var img = document.getElementById('receiptPreview');
+      img.src = ev.target.result;
+      img.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('receiptSaveBtn').addEventListener('click', function() {
+    var bought = document.getElementById('rc-bought').value || todayStr();
+    var category = document.getElementById('rc-category').value;
+    var lines = document.getElementById('rc-items').value.split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+    if (lines.length === 0) { document.getElementById('rc-items').focus(); return; }
+    var expiryDate = new Date(bought + 'T00:00:00');
+    expiryDate.setDate(expiryDate.getDate() + 3);
+    var expiry = expiryDate.toISOString().slice(0,10);
+    lines.forEach(function(name) {
+      items.push({ id: uid(), name: name, category: category, bought: bought, expiry: expiry,
+        quantity: null, unit: '', price: null, dishes: [], consumption: [] });
+    });
+    saveItems();
+    document.getElementById('receiptOverlay').classList.remove('open');
+    render();
+  });
+
+  /* ---------------- INIT ---------------- */
+  document.getElementById('log-date').value = todayStr();
+  loadAll();
+  var savedTab = 'ingredients';
+  try { savedTab = localStorage.getItem(TAB_KEY) || 'ingredients'; } catch(e) {}
+  setTab(savedTab);
+  render();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  }
+})();
+</script>
+</body>
+</html>
